@@ -20,7 +20,7 @@ namespace numberManager
 			int sumVector(vector<int>& vec, int tam);
 			int sumVectorProduct(vector<int>& vec, int multi, int tam, int m);
 			int columnPrimeNumber(vector<int>& vec, int tam);
-			vector<int> getColumn(int min,int max, int tam)
+			vector<int> getColumn(int min,int max, int tam);
 	}
 }
 
