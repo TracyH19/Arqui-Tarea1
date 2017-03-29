@@ -1,9 +1,25 @@
-
 #include "numberManager.h"
 
 using namespace numberManager;
 using namespace std;
 
+
+
+numberManager()
+{
+    //ctor
+}
+
+~numberManager()
+{
+    //dtor
+}
+
+
+/**
+ *  Metodo que recive como parametro un numero y determina si es primo o no.
+ *  Retorna true si es primo, caso contrario, false.
+ */
 bool isPrime(int n){
 	bool resp = false;
 	if(n>2){
@@ -23,52 +39,53 @@ bool isPrime(int n){
 	return resp;
 }
 
-vector<int> product(vector<int>& vec, int multi, int tam){
-    vector<int> resp;
-    int i = 0;
-	while(i < tam){
-		resp.push_back(vec[i] * multi);
+
+/**
+ *  Metodo que multiplica una fila por un valor.
+ *  Recibe un tam para determinar su largo, la columna(de la matriz) vec a multiplicar y el valor multi(del vector).
+ *  Retorna el vector creado de dicho producto
+ */
+vector<int>* product(vector<int>* vec, int multi, int tam){
+    vector<int>* resp = new (nothrow) vector<int>;
+    if(resp == NULL){
+        cout << "No fue posible reservar la memoria para el vector";
+    }else{
+		for(vector<int>::const_iterator i = vec->begin(); i != vec->end(); i++){
+			resp->push_back(*i * multi);
+		}
 	}
     return resp;
 }
 
 
-int sumVector(vector<int>& vec, int tam){
+/**
+ *  Metodo que suma los valores de un vector.
+ *  Recibe un vector vec y y su tamaño.
+ *  Retorna la sumatoria del vector
+ * 	No estoy seguro de que sea necesario
+ */
+int sumVector(vector<int>* vec, int tam){
 	int resp = 0;
-	int i = 0;
-	while(i < tam){
-		resp = resp + vec[i];
+	for(vector<int>::const_iterator i = vec->begin(); i != vec->end(); i++){
+		resp = resp + *i;
 	}
-	return resp;
-}
-
-int sumVectorProduct(vector<int>& vec, int multi, int tam, int m){
-	vector<int> newVec = product(vec, multi, tam);
-	int resp = sumVector(newVec, m)
 	return resp;
 }
 
 	
-
-int columnPrimeNumber(vector<int>& vec, int tam){
+/**
+ *  Metodo que suma los valores de un vector.
+ *  Recibe un vector vec y y su tamaño.
+ *  Retorna la sumatoria del vector
+ */
+int columnPrimeNumber(vector<int>* vec, int tam){
 	int resp = 0;
-    int i = 0;
-	while(i < tam){
-		if(isPrime( vec[i] )){
+	for(vector<int>::const_iterator i = vec->begin(); i != vec->end(); i++){
+		if(isPrime(  *i )){
 			resp = resp + 1;
 		}
-		i++;
 	}
 	return resp;
 }
 
 
-vector<int> getColumn(int min,int max, int tam){
-    vector<int> resp;
-    int i = 0;
-	srand(time(NULL));
-	while(i < tam){
-		resp.push_back(1 + rand() % (max - min));
-	}
-    return resp;
-}
