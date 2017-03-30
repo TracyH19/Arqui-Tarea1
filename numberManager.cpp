@@ -78,7 +78,7 @@ int sumVector(vector<int>* vec, int tam){
  *  Recibe un vector vec y y su tamaño.
  *  Retorna la sumatoria del vector
  */
-int columnPrimeNumber(vector<int>* vec, int tam){
+int columnPrimeNumber(vector<int>* vec){
 	int resp = 0;
 	for(vector<int>::const_iterator i = vec->begin(); i != vec->end(); i++){
 		if(isPrime(  *i )){

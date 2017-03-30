@@ -95,3 +95,28 @@ void structuresManager::printMatrix(vector<int>* matrix, int m){
         }
     }
 }
+
+
+/*
+	rows: numero de filas
+	columns: numero de columnas
+*/
+void structuresManager::sendMatrix(vector<int>* matrix, int columns,int rows, int proc){
+	int i = 0;
+	int j = 0;
+	int space = 0;
+	
+	while(i<columns){
+		vector<int>* vec = new (nothrow) vector<int>;
+		sendVector();
+		
+	}
+}
+
+void structuresManager::sendVector(vector<int>* vec, int space, int place,int rowMulti, int proc){
+	int finish = place+space;
+	MPI_Send ( &place, 1, MPI_INT, proc, 156, MPI_COMM_WORLD);
+	MPI_Send ( &finish, 1, MPI_INT, proc, 199, MPI_COMM_WORLD);	
+	MPI_Send(matrix + place, space, MPI_INT, proc, 0, MPI_COMM_WORLD);	
+}
+

@@ -16,7 +16,7 @@ namespace numberManager
 			
 			vector<int>* product(vector<int>* vec, int multi, int tam);
 			int sumVector(vector<int>* vec, int tam);
-			int columnPrimeNumber(vector<int>* vec, int tam);
+			int columnPrimeNumber(vector<int>* vec);
 		
 		protected:
 		
