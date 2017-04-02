@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
 	int myid;
 	int row = 0;
 	int column = 0;
+	MPI_Status recv_status;
 	vector<int>* myMatrix;
 	
 	vector<int>* matrix;
@@ -53,7 +54,7 @@ int main(int argc, char *argv[])
 		structManager.sendMatrix(matrix, column, numprocs);
 		
 		/*Enviar vector */
-		MPI_Bcast (&vectorUnoXN, column, MPI_INT, 0, MPI_COMM_WORLD);
+		MPI_Bcast(&vectorUnoXN, column, MPI_INT, 0, MPI_COMM_WORLD);
 		
 		startwtime = MPI_Wtime();
     }
@@ -61,11 +62,31 @@ int main(int argc, char *argv[])
 	 
 	MPI_Barrier(MPI_COMM_WORLD);
 	
-	MPI_Bcast(&column, 1, MPI_INT, 15, MPI_COMM_WORLD); 
+	//Se enviar el numero de columnas.
+	MPI_Bcast(&column, 1, MPI_INT, 160, MPI_COMM_WORLD);
+	//Creo que no es necesario.
+	// MPI_Recv (&vectorUnoXN, column, MPI_INT, 0, 160, MPI_COMM_WORLD, &recv_status);
+	
+	//recibe la fila donde comienza
+	MPI_Recv(&myRowInit, 1, MPI_INT, 0, 156, MPI_COMM_WORLD, &recv_status);
+	
+	//recibe la fila donde termina
+	MPI_Recv(&myRowFinish, 1, MPI_INT, 0, 199, MPI_COMM_WORLD, &recv_status);	
+	
+	//recibe la columa del vector que le toca
+	MPI_Recv(&rowMulti, 1, MPI_INT, 0, 171, MPI_COMM_WORLD, &recv_status);	
+	
 	
 	numberManager numManager = new numberManager();	 
+	
+	for(int auxInit = myRowInit,int auxFinish = myRowFinish; auxInit < auxFinish; auxInit++){
+		myPrime = myPrime + columnPrimeNumber(&myMatrix.at(myRowInit));//TODO: verificar esto.
+	}
+	
+	
+	
 	 
-	 MPI_Barrier(MPI_COMM_WORLD);
+	MPI_Barrier(MPI_COMM_WORLD);
 	 
 	MPI_Reduce(&myPrime, &nPrimes, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 	if ( rank == 0 ) {
