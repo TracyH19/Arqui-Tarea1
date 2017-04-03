@@ -1,16 +1,11 @@
 #include "numberManager.h"
 
-using namespace numberManager;
-using namespace std;
-
-
-
-numberManager()
+numberManager::numberManager()
 {
     //ctor
 }
 
-~numberManager()
+numberManager::~numberManager()
 {
     //dtor
 }
@@ -20,7 +15,7 @@ numberManager()
  *  Metodo que recive como parametro un numero y determina si es primo o no.
  *  Retorna true si es primo, caso contrario, false.
  */
-bool isPrime(int n){
+bool numberManager::isPrime(int n){
 	bool resp = false;
 	if(n>2){
 		int tam = static_cast<int>(floor(sqrt(n))+1);
@@ -32,7 +27,7 @@ bool isPrime(int n){
 		}
 	}
 	else{
-		if(n>0)){
+		if(n > 0){
 			resp = true;
 		}
 	}
@@ -45,12 +40,13 @@ bool isPrime(int n){
  *  Recibe un tam para determinar su largo, la columna(de la matriz) vec a multiplicar y el valor multi(del vector).
  *  Retorna el vector creado de dicho producto
  */
-vector<int>* product(vector<int>* vec, int multi, int columns, int init){
+vector<int>* numberManager::product(vector<int>* vec, int multi&){
     vector<int>* resp = new (nothrow) vector<int>;
     if(resp == NULL){
-        cout << "No fue posible reservar la memoria para el vector";
+        cout << "No fue posible reservar la memoria para el vector" << endl;
     }else{
-		for(vector<int>::const_iterator i = vec.at(init); i != vec->end() && i < columns ; i++){
+
+        for(vector<int>::const_iterator i = vec.begin(); i != vec.end(); i ++){
 			resp->push_back(*i * multi);
 		}
 	}
@@ -64,33 +60,60 @@ vector<int>* product(vector<int>* vec, int multi, int columns, int init){
  *  Retorna la sumatoria del vector
  * 	No estoy seguro de que sea necesario
  */
-int sumVector(vector<int>* vec, int columns, int init){
+int numberManager::sumVector(vector<int>* vec, int columns, int init){
 	int resp = 0;
-	for(vector<int>::const_iterator i = vec.at(init); i != vec->end() && i < columns ; i++){
-		resp = resp + *i;
-	}
+
+    vector<int>::const_iterator i = vec->begin();
+    advance(i, init);
+
+    vector<int>::const_iterator j = vec->begin();
+    advance(j, columns);
+
+    while(i != j){
+        i++;
+        resp = resp + *i;
+    }
+
+	//for(vector<int>::const_iterator i = vec->at(init); i != vec->end() && i < columns ; i++){
+	//	resp = resp + *i;
+	//}
 	return resp;
 }
 
-	
+
 /**
  *  Metodo que suma los valores de un vector.
  *  Recibe un vector vec y y su tamaño.
  *  Retorna la sumatoria del vector
  */
-int columnPrimeNumber(vector<int>* vec,  int columns, int init){
+int numberManager::columnPrimeNumber(vector<int>* vec,  int columns, int init){
 	int resp = 0;
-	for(vector<int>::const_iterator i = vec.at(init); i != vec->end() && i < columns ; i++){
-		if(isPrime(  *i )){
-			resp = resp + 1;
-		}
-	}
+
+	vector<int>::const_iterator i = vec->begin();
+    advance(i, init);
+
+    vector<int>::const_iterator j = vec->begin();
+    advance(j, columns);
+
+    while(i != j){
+        i++;
+
+        if(isPrime(*i)){
+            resp++;
+        }
+    }
+
+	//for(vector<int>::const_iterator i = vec.at(init); i != vec->end() && i < columns ; i++){
+	//	if(isPrime(  *i )){
+	//		resp = resp + 1;
+	//	}
+	//}
 	return resp;
 }
 
-int especificColumnPrimeNumber(vector<int>* vec, int column){
+int numberManager::especificColumnPrimeNumber(vector<int>* vec, int column){
 	int resp = 0;
-	if(isPrime(vec.at(column)){
+	if(isPrime(vec->at(column))){
 		resp = 1;
 	}
 	return resp;
