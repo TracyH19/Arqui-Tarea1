@@ -1,135 +1,166 @@
-#include <iostream.h>
+#include <iostream>
+
 #include "mpi.h"
 #include "numberManager.h"
 #include "structuresManager.h"
+#include "funcionMatrix.h"
+#include "filesManager.h"
 
 int main(int argc, char *argv[])
 {
-	int numprocs;
-	int myid;
+    double startFullTime;
+	double endFullTime;
+	double startPartTime;
+	double endPartTime;
+
 	vector<int>* matrix;
-	vector<int>* vectorUnoXN;
-	MPI_Status recv_status;
-	double InitilStart, TimestartTime, FinishEndTime, endTime;
-    int  namelen;
+	vector<int>* vec;
+	vector<int>* P;
+	vector<int>* Q;
+
+	MPI_Status status;
+
     char processorName[MPI_MAX_PROCESSOR_NAME];
-	
+    int myMPI;
+    int myID;
+    int namelen;
+    int numprocs = 10;
+
+    int n;
+    int m;
+    int PM;
+
+    structuresManager sm;
+    filesManager fm;
+    numberManager nm;
+    funcionMatrix funcM;
+
+
+    /**
 	int row = 0;
 	int column = 0;
-	
-	
-	vector<int>* myMatrix;
-	vector<int>* myMatrixResp;
 	int myRowInit;
 	int myRowFinish;
-	
 	int myPrime = 0;
 	int nPrimes = 0;
 	int rowMyPrime = 0;
 	int columnPrime = -1;
-	
-	 MPI::Init(argc, argv);
+	*/
 
-	 MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
-	 MPI_Comm_rank(MPI_COMM_WORLD,&myid);
-	 MPI_Get_processor_name(processorName,&namelen);
-	 
-	if (myid == 0){
-		cout << "Cuenta con " << numprocs << " procesos.\n";
-		
-        while (!row || 1 > row ||((row) % n) != 0 ){
-			printf("Por favor, digite el numero de filas multiplo del numero de procesos:  ");
-			fflush(stdout);
-			scanf("%d",&row);
+	myMPI = MPI_Init(&argc, &argv);
+
+    myMPI = MPI_Comm_rank(MPI_COMM_WORLD, &myID);
+
+    myMPI = MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+
+    myMPI = MPI_Get_processor_name(processorName,&namelen);
+
+    cout << "El proceso " << myID << " se encuentra en " << processorName << endl;
+
+    myMPI = MPI_Barrier(MPI_COMM_WORLD);
+
+	if (myID == 0){
+		cout << "Se tienen " << numprocs << " procesos." << endl;
+
+        while (!n || 1 > n ||((n) % numprocs) != 0 ){
+			cout << "Digite el numero de entradas para el vector" << endl;
+			cout << "Debe ser multiplo de: " << numprocs << endl;
+			cin >> n;
 		}
-		
-		while (!column || 1 > column){
-			printf("Ahora digite el numero de columnas:  ");
-			fflush(stdout);
-			scanf("%d",&column);
+
+		while (!m){
+            cout << "Digite la cantidad de columnas para la matriz:" << endl;
+			cin >> m;
 		}
-		
-		while (0 > columnPrime){
-			printf("Ahora digite la columna especifica de la que quiere saber el numero de primos:  ");
-			fflush(stdout);
-			scanf("%d",&columnPrime);
-		}
-		
-		structuresManager structManager = new structuresManager();
-		
+
 		/*hacer vector*/
-		vectorUnoXN = structManager.createVector(column);
-		
-		/*hacer matriz*/
-		matrix = structManager.createMatrix(row, column);
-		
-		/*Enviar matriz*/
-		structManager.sendMatrix(matrix, column, numprocs);
-		
-		//Enviar el numero de columnas.
-		MPI_Bcast(&column, 1, MPI_INT, 160, MPI_COMM_WORLD);
-		
-		/*Enviar vector */
-		MPI_Bcast(&vectorUnoXN, column, MPI_INT, 140, MPI_COMM_WORLD);
-		
-		/*Enviar Fila para numero primo */
-		MPI_Bcast(&columnPrime, 1, MPI_INT, 130, MPI_COMM_WORLD);
-		
-		startwtime = MPI_Wtime();
-    }
-	 /*dividir matriz*/
-	 
-	MPI_Barrier(MPI_COMM_WORLD);
-	
-	
-	//Creo que no es necesario.
-	MPI_Recv(&column, 1, MPI_INT, 0, 160, MPI_COMM_WORLD, &recv_status);
-	
-	//Creo que no es necesario.
-	MPI_Recv(&vectorUnoXN, column, MPI_INT, 0, 140, MPI_COMM_WORLD, &recv_status);
-	
-	//Creo que no es necesario.
-	MPI_Recv(&columnPrime, 1, MPI_INT, 0, 130, MPI_COMM_WORLD, &recv_status);
-	
-	//recibe la fila donde comienza
-	MPI_Recv(&myRowInit, 1, MPI_INT, 0, 156, MPI_COMM_WORLD, &recv_status);
-	
-	//recibe la fila donde termina
-	MPI_Recv(&myRowFinish, 1, MPI_INT, 0, 199, MPI_COMM_WORLD, &recv_status);	
-	
-	//recibe la columa del vector que le toca
-	MPI_Recv(&rowMulti, 1, MPI_INT, 0, 171, MPI_COMM_WORLD, &recv_status);
+		vec = sm.createVector(n);
 
-	MPI_Recv(&myMatrix, 1, MPI_INT, 0, 150, MPI_COMM_WORLD, &recv_status);
-	
-	numberManager numManager = new numberManager();	 
-	
-	funcionMatrix funMatrix = new funcionMatrix();	
-	
-	myMatrixResp = new (nothrow) vector<int>;
-    if(myMatrixResp == NULL){
-		cout << "No fue posible reservar la memoria para el vector";
-		//TODO: Cancelar el proceso.
+		/*hacer matriz*/
+		matrix = sm.createMatrix(n, m);
+
+
+		myMPI = MPI_Bcast(&vec, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+		int inicio = 0;
+
+		for(int i = 0; i < numprocs; i++){
+
+            MPI_Send(matrix->at(inicio), m, MPI_INT, i, 1, MPI_COMM_WORLD);
+            inicio = inicio + m;
+		}
+
+        myMPI = MPI_Barrier(MPI_COMM_WORLD);
+
+		for(int j = 0; j < numprocs; j++){
+            myMPI = MPI_Recv(&resp, m, MPI_INT, j, 2, MPI_COMM_WORLD, &status);
+
+            Q->at(j) = resp->at(0);
+		}
+
+		int num;
+
+		while(num != 1 || num != 2){
+            cout << "Si desea almacenar los resultados en archivos, digite 1 " << endl;
+            cout << "Si desea que los resultados se muestren en pantalla, digite 2 " << endl;
+            cin >> num;
+        }
+
+		if(num == 1){
+            char* vect = "vector.txt";
+	    int col = 0;
+            fm.createFile(vect, *vec, n, col);
+
+            char* mat = "matriz.txt";
+            fm.createFile(mat, *matrix, n, m);
+
+            char* nom_P = "vector_P.bin";
+            fm.createBinFile(nom_P, *P, n, col);
+
+            char* nom_Q = "vector_Q.bin";
+            fm.createBinFile(nom_Q, *Q, n, col);
+
+		}else{
+		    cout << "El vector original es: " << endl;
+		    sm.printVector(vec);
+
+		    cout << "La matriz original es " << endl;
+            sm.printMatrix(matrix, m);
+
+            cout << "El vector Q es: " << endl;
+            sm.printVector(Q);
+
+            cout << "El vector P es: " << endl;;
+            sm.printVector(P);
+
+            cout << "La cantidad de primos en la matriz es: ";
+            cout << PM << endl;
+		}
+
+
 	}
-	
-	for(int auxInit = myRowInit,int auxFinish = myRowFinish; auxInit < auxFinish; auxInit++){
-		vector<int>* tmpMatrix;
-		myPrime = myPrime + columnPrimeNumber(&myMatrix.at(myRowInit));//Funcion Prime
-		rowMyPrime = rowMyPrime + especificColumnPrimeNumber(&myMatrix.at(myRowInit),columnPrime);//Funcion Prime[colum].
-		tmpMatrix = product(myMatrix, int multi, int columns, int init)//Funcion product matrix[1][n] X matrix[n][m]
-		matrixAddMatrix(myMatrixResp, tmpMatrix);
+
+	if(myID > 0){
+        myMPI = MPI_Recv(&matrix, m, MPI_INT, 0, 1, MPI_COMM_WORLD);
+
+        for(vector<int>::const_iterator i = matrix->begin(); i != matrix->end(); i++){
+
+            vector<int>* resp = new (nothrow) vector<int>;
+            resp = nm.product(*matrix, vec->at(myID));
+
+            int n = matrix->at(i);
+            if(nm.isPrime(n)){
+                PM++;
+                int a = P->at(myID);
+                a++;
+                P->at(myID) = a;
+            }
+        }
+
+        myMPI = MPI_Send(&resp, m, MPI_INT, 0, 2, MPI_COMM_WORLD);
 	}
-	
-	//Enviar myMatrixResp al 0 para que comience a hacer merge de resultados.
-	
-	 
-	MPI_Barrier(MPI_COMM_WORLD);
-	 
-	MPI_Reduce(&myPrime, &nPrimes, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-	if ( rank == 0 ) {
-		// Respuestas
-	}
-	
-	
-	 MPI::Finalize();
-} 
+
+	MPI_Finalize();
+
+	return 0;
+}
