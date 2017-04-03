@@ -20,8 +20,8 @@ class structuresManager
         void printVector(vector<int>* vec);
         void printMatrix(vector<int>* matrix, int m);
 		
-		void sendMatrix(vector<int>* matrix, int m, int proc);
-		void sendVector(vector<int>* vec, int m, int proc);
+		void sendMatrix(vector<int>* matrix, int columns, int rows, int proc);
+		void sendVector(vector<int>* matrix, int space, int place, int proc);
 
     protected:
     private:

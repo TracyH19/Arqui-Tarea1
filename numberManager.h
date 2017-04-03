@@ -14,9 +14,11 @@ namespace numberManager
 			numberManager();
 			virtual ~numberManager();
 			
-			vector<int>* product(vector<int>* vec, int multi, int tam);
-			int sumVector(vector<int>* vec, int tam);
-			int columnPrimeNumber(vector<int>* vec);
+			vector<int>* product(vector<int>* vec, int multi, int columns, int init);
+			int sumVector(vector<int>* vec, int columns, int init);
+			int columnPrimeNumber(vector<int>* vec,  int columns, int init);
+			
+			int especificColumnPrimeNumber(vector<int>* vec, int column);
 		
 		protected:
 		

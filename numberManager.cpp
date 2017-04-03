@@ -45,12 +45,12 @@ bool isPrime(int n){
  *  Recibe un tam para determinar su largo, la columna(de la matriz) vec a multiplicar y el valor multi(del vector).
  *  Retorna el vector creado de dicho producto
  */
-vector<int>* product(vector<int>* vec, int multi, int tam){
+vector<int>* product(vector<int>* vec, int multi, int columns, int init){
     vector<int>* resp = new (nothrow) vector<int>;
     if(resp == NULL){
         cout << "No fue posible reservar la memoria para el vector";
     }else{
-		for(vector<int>::const_iterator i = vec->begin(); i != vec->end(); i++){
+		for(vector<int>::const_iterator i = vec.at(init); i != vec->end() && i < columns ; i++){
 			resp->push_back(*i * multi);
 		}
 	}
@@ -64,9 +64,9 @@ vector<int>* product(vector<int>* vec, int multi, int tam){
  *  Retorna la sumatoria del vector
  * 	No estoy seguro de que sea necesario
  */
-int sumVector(vector<int>* vec, int tam){
+int sumVector(vector<int>* vec, int columns, int init){
 	int resp = 0;
-	for(vector<int>::const_iterator i = vec->begin(); i != vec->end(); i++){
+	for(vector<int>::const_iterator i = vec.at(init); i != vec->end() && i < columns ; i++){
 		resp = resp + *i;
 	}
 	return resp;
@@ -78,12 +78,20 @@ int sumVector(vector<int>* vec, int tam){
  *  Recibe un vector vec y y su tamaño.
  *  Retorna la sumatoria del vector
  */
-int columnPrimeNumber(vector<int>* vec){
+int columnPrimeNumber(vector<int>* vec,  int columns, int init){
 	int resp = 0;
-	for(vector<int>::const_iterator i = vec->begin(); i != vec->end(); i++){
+	for(vector<int>::const_iterator i = vec.at(init); i != vec->end() && i < columns ; i++){
 		if(isPrime(  *i )){
 			resp = resp + 1;
 		}
+	}
+	return resp;
+}
+
+int especificColumnPrimeNumber(vector<int>* vec, int column){
+	int resp = 0;
+	if(isPrime(vec.at(column)){
+		resp = 1;
 	}
 	return resp;
 }
