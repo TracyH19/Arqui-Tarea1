@@ -82,7 +82,7 @@ void structuresManager::printVector(vector<int>* vec){
  *  No retorna datos.
  */
 
-void structuresManager::printMatrix(vector<int>* matrix, int m){
+void structuresManager::printMatrix(vector<int>* matrix, int& m){
     int cont = 0;
 
     for(vector<int>::const_iterator i = matrix->begin(); i != matrix->end(); i++){
@@ -105,7 +105,7 @@ void structuresManager::sendMatrix(vector<int>* matrix, int columns, int rows, i
 	int i = 0;
 	int space = rows / proc;
 	while(i<columns){
-		sendVector(matrix, space, place, proc );
+		sendVector(matrix, space, rows, proc ); /**place no existe, es row?*/
 	}
 }
 
@@ -118,8 +118,8 @@ void structuresManager::sendMatrix(vector<int>* matrix, int columns, int rows, i
 void structuresManager::sendVector(vector<int>* matrix, int space, int place, int proc){
 	int finish = place+space;
 	MPI_Send(&place, 1, MPI_INT, proc, 156, MPI_COMM_WORLD);
-	MPI_Send(&finish, 1, MPI_INT, proc, 199, MPI_COMM_WORLD);	
-	MPI_Send(&space, 1, MPI_INT, proc, 171, MPI_COMM_WORLD);	
-	MPI_Send(matrix + place, space, MPI_INT, proc, 150, MPI_COMM_WORLD);	
+	MPI_Send(&finish, 1, MPI_INT, proc, 199, MPI_COMM_WORLD);
+	MPI_Send(&space, 1, MPI_INT, proc, 171, MPI_COMM_WORLD);
+	MPI_Send(matrix + place, space, MPI_INT, proc, 150, MPI_COMM_WORLD);
 }
 
