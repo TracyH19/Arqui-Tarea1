@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <time.h>
+#include <mpi.h>
 
 using namespace std;
 
@@ -18,8 +19,8 @@ class structuresManager
         vector<int>* createVector(int n);
         vector<int>* createMatrix(int n, int m);
         void printVector(vector<int>* vec);
-        void printMatrix(vector<int>* matrix, int m);
-		
+        void printMatrix(vector<int>* matrix, int& m);
+
 		void sendMatrix(vector<int>* matrix, int columns, int rows, int proc);
 		void sendVector(vector<int>* matrix, int space, int place, int proc);
 
@@ -28,3 +29,4 @@ class structuresManager
 };
 
 #endif // STRUCTURESMANAGER_H
+
