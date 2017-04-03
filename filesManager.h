@@ -13,8 +13,8 @@ class filesManager
         filesManager();
         virtual ~filesManager();
 
-        void createFile(char* nombre, vector<int>* vec, int n, int m);
-        void createBinFile(char* nombre, vector<int>* vec, int n, int m);
+        void createFile(char* nombre, vector<int>& vec, int& n, int& m);
+        void createBinFile(char* nombre, vector<int>& vec, int& n, int& m);
 
     protected:
     private:
